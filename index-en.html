@@ -184,6 +184,32 @@
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
 
+        /* Preview container for image upload */
+        .image-preview-container {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: var(--light-bg);
+        }
+
+        .image-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .image-preview-placeholder {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
         /* Art Grid & Cards */
         .art-grid {
             display: grid;
@@ -330,8 +356,11 @@
                             <input type="text" id="input-size" class="form-control" placeholder="e.g., 73.7 cm × 92.1 cm">
                         </div>
                         <div class="form-group">
-                            <label for="input-image">Image URL</label>
-                            <input type="url" id="input-image" class="form-control" placeholder="e.g., https://example.com/art.jpg">
+                            <label for="input-image-file">Upload Image</label>
+                            <input type="file" id="input-image-file" class="form-control" accept="image/*">
+                            <div class="image-preview-container" id="preview-container">
+                                <div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Save to Inventory</button>
                     </form>
@@ -351,7 +380,7 @@
     </footer>
 
     <script>
-        // Sample default datasets requested in requirements
+        // Sample default datasets requested in requirements (Using base64 placeholders to keep it self-contained if offline)
         const defaultArtworks = [
             {
                 id: "sample-1",
@@ -375,6 +404,7 @@
 
         // Core State Controller
         let inventory = [];
+        let currentBase64Image = ""; // Holds the processed image string
 
         // DOM elements
         const artGrid = document.getElementById('art-grid');
@@ -382,6 +412,9 @@
         const statsCounter = document.getElementById('stats-counter');
         const btnDownload = document.getElementById('btn-download');
         const btnClearAll = document.getElementById('btn-clear-all');
+        const inputImageFile = document.getElementById('input-image-file');
+        const previewContainer = document.getElementById('preview-container');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
 
         // Initializer
         function initApp() {
@@ -396,7 +429,6 @@
                     saveToLocalStorage();
                 }
             } else {
-                // If LocalStorage is completely empty, populate with default samples
                 inventory = [...defaultArtworks];
                 saveToLocalStorage();
             }
@@ -405,12 +437,70 @@
 
         // Persist local state changes
         function saveToLocalStorage() {
-            localStorage.setItem('akvarellskiss_art_inventory', JSON.stringify(inventory));
-            updateStats();
+            try {
+                localStorage.setItem('akvarellskiss_art_inventory', JSON.stringify(inventory));
+                updateStats();
+            } catch (e) {
+                alert("Storage limit exceeded! The image you are trying to add might be too large, or your local storage is full. Please try a different image or clear some old entries.");
+                console.error("LocalStorage write error:", e);
+            }
         }
 
         function updateStats() {
             statsCounter.textContent = `Total Artworks: ${inventory.length}`;
+        }
+
+        // Real-time Image Processor & Image Compressor (Crucial for LocalStorage limits)
+        inputImageFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                resetImagePreview();
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Maximum dimensions for the stored image to save LocalStorage space
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    // Draw image to invisible canvas to compress it to a reasonable JPEG size
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Get compressed base64 string
+                    currentBase64Image = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Show preview
+                    previewContainer.innerHTML = `<img src="${currentBase64Image}" alt="Preview">`;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function resetImagePreview() {
+            currentBase64Image = "";
+            previewContainer.innerHTML = `<div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>`;
         }
 
         // Render cards to interface
@@ -433,7 +523,6 @@
                 const card = document.createElement('div');
                 card.className = 'art-card';
                 
-                // Safe placeholder verification
                 const fallbackImg = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23cccccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
                 const imgSrc = art.image && art.image.trim() !== '' ? art.image : fallbackImg;
 
@@ -480,15 +569,16 @@
                 year: document.getElementById('input-year').value.trim(),
                 medium: document.getElementById('input-medium').value.trim(),
                 size: document.getElementById('input-size').value.trim(),
-                image: document.getElementById('input-image').value.trim()
+                image: currentBase64Image // Uses the generated/compressed string or empty
             };
 
             inventory.push(newArt);
             saveToLocalStorage();
             renderGallery();
             
-            // Clean up inputs
+            // Clean up inputs and image preloader state
             artForm.reset();
+            resetImagePreview();
         });
 
         // Explicit Action Handler: Delete Targeted Item
@@ -524,6 +614,7 @@
                 inventory = [];
                 saveToLocalStorage();
                 renderGallery();
+                resetImagePreview();
             }
         });
 
