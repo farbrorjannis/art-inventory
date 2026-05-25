@@ -6,17 +6,23 @@
     <title>Art Inventory - A free tool from www.akvarellskiss.se</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
-            --light-bg: #f8f9fa;
+            --primary-color: #4a3728; /* Deep rich brown from your reference style */
+            --primary-hover: #36281d;
+            --accent-color: #8c7355;  /* Muted earth tone */
+            --danger-color: #a94442;
+            --danger-hover: #843534;
+            --success-color: #5b7053; /* Sage/olive green */
+            --success-hover: #45533e;
+            --light-bg: #fdfcfb;      /* Soft warm off-white canvas */
+            --panel-bg: #f8f5f1;     /* Cream/beige background for controls */
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #dddddd;
-            --radius: 8px;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --text-color: #2b2520;
+            --text-muted: #70655c;
+            --border-color: #d1c7bd;  /* Warm grey border */
+            --radius: 6px;
+            --shadow-sm: 0 2px 4px rgba(74, 55, 40, 0.05);
+            --shadow-md: 0 6px 12px rgba(74, 55, 40, 0.08);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -26,600 +32,115 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.5;
             padding-bottom: 60px;
         }
 
         header {
             background-color: var(--primary-color);
-            color: white;
-            padding: 20px 15px;
+            color: #f8f5f1;
+            padding: 24px 15px;
             text-align: center;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
         }
 
         header h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         header a {
-            color: var(--accent-color);
+            color: #e2dacb;
             text-decoration: none;
+            border-bottom: 1px dashed #e2dacb;
             transition: var(--transition);
         }
 
         header a:hover {
-            text-decoration: underline;
-            color: #5dade2;
+            color: #ffffff;
+            border-bottom-style: solid;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 15px;
+            max-width: 1240px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
         /* Toolbar styles */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--card-bg);
-            padding: 15px;
+            background-color: var(--panel-bg);
+            padding: 18px 24px;
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 35px;
+        }
+
+        .toolbar-info {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--primary-color);
         }
 
         .toolbar-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* Buttons */
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
+        /* Controls Block (Sort option matching your image style) */
+        .gallery-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-end;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-
-        /* Main layout split for Form and Gallery */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-        }
-
-        @media (min-width: 992px) {
-            .main-layout {
-                grid-template-columns: 350px 1fr;
-            }
-        }
-
-        /* Form Card */
-        .form-card {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
-
-        .form-card h2 {
             margin-bottom: 20px;
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--light-bg);
-            padding-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        .control-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: var(--text-muted);
         }
 
-        .form-control {
-            width: 100%;
-            padding: 10px;
+        /* Form elements & Select styles matching screenshot */
+        .form-control, .select-control {
+            background-color: #ffffff;
+            color: var(--text-color);
+            padding: 10px 14px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
             font-size: 0.95rem;
             transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        /* Preview container for image upload */
-        .image-preview-container {
             width: 100%;
-            height: 120px;
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius);
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background-color: var(--light-bg);
         }
 
-        .image-preview-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .image-preview-placeholder {
-            color: #7f8c8d;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-
-        /* Art Grid & Cards */
-        .art-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .art-card {
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .art-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        }
-
-        /* Responsive image container requirement */
-        .art-img-container {
-            width: 100%;
-            height: 250px;
-            background-color: #eaeaea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .art-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Prevents distortion for any aspect ratio */
-            padding: 5px;
-        }
-
-        .art-details {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .art-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-            line-height: 1.3;
-        }
-
-        .art-meta {
-            font-size: 0.9rem;
-            color: #666666;
-            margin-bottom: 4px;
-        }
-
-        .art-meta strong {
-            color: #444444;
-        }
-
-        .art-actions {
-            margin-top: auto;
-            padding-top: 15px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        /* Empty state notification */
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 50px 20px;
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            color: #7f8c8d;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Art Inventory - A free tool from <a href="https://www.akvarellskiss.se" target="_blank" rel="noopener noreferrer">www.akvarellskiss.se</a></h1>
-    </header>
-
-    <div class="container">
-        <div class="toolbar">
-            <div class="toolbar-info">
-                <span id="stats-counter">Total Artworks: 0</span>
-            </div>
-            <div class="toolbar-buttons">
-                <button class="btn btn-success" id="btn-download" title="Export current registry to a JSON file">Download Registry (JSON)</button>
-                <button class="btn btn-danger" id="btn-clear-all" title="Completely clear all artworks from local registry">Clear All Artworks</button>
-            </div>
-        </div>
-
-        <div class="main-layout">
-            
-            <section class="form-container">
-                <div class="form-card">
-                    <h2>Add New Artwork</h2>
-                    <form id="art-form">
-                        <div class="form-group">
-                            <label for="input-title">Title *</label>
-                            <input type="text" id="input-title" class="form-control" placeholder="e.g., Starry Night" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="input-artist">Artist</label>
-                            <input type="text" id="input-artist" class="form-control" placeholder="e.g., Vincent van Gogh">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-year">Year</label>
-                            <input type="text" id="input-year" class="form-control" placeholder="e.g., 1889">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-medium">Medium</label>
-                            <input type="text" id="input-medium" class="form-control" placeholder="e.g., Oil on canvas">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-size">Size</label>
-                            <input type="text" id="input-size" class="form-control" placeholder="e.g., 73.7 cm × 92.1 cm">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-image-file">Upload Image</label>
-                            <input type="file" id="input-image-file" class="form-control" accept="image/*">
-                            <div class="image-preview-container" id="preview-container">
-                                <div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Save to Inventory</button>
-                    </form>
-                </div>
-            </section>
-
-            <section class="gallery-container">
-                <div class="art-grid" id="art-grid">
-                    </div>
-            </section>
-
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 Art Inventory App. Provided freely by akvarellskiss.se. All data stored safely on your own machine local storage.</p>
-    </footer>
-
-    <script>
-        // Sample default datasets requested in requirements (Using base64 placeholders to keep it self-contained if offline)
-        const defaultArtworks = [
-            {
-                id: "sample-1",
-                title: "Serenity in Watercolor",
-                artist: "Jannis Politidis",
-                year: "2024",
-                medium: "Watercolor on Arches Paper",
-                size: "30x40 cm",
-                image: "https://picsum.photos/id/1025/600/400"
-            },
-            {
-                id: "sample-2",
-                title: "Abstract Nordic Landscape",
-                artist: "Elena Lindqvist",
-                year: "2025",
-                medium: "Acrylic & Mixed Media",
-                size: "80x80 cm",
-                image: "https://picsum.photos/id/1043/500/700"
-            }
-        ];
-
-        // Core State Controller
-        let inventory = [];
-        let currentBase64Image = ""; // Holds the processed image string
-
-        // DOM elements
-        const artGrid = document.getElementById('art-grid');
-        const artForm = document.getElementById('art-form');
-        const statsCounter = document.getElementById('stats-counter');
-        const btnDownload = document.getElementById('btn-download');
-        const btnClearAll = document.getElementById('btn-clear-all');
-        const inputImageFile = document.getElementById('input-image-file');
-        const previewContainer = document.getElementById('preview-container');
-        const previewPlaceholder = document.getElementById('preview-placeholder');
-
-        // Initializer
-        function initApp() {
-            const storedData = localStorage.getItem('akvarellskiss_art_inventory');
-            
-            if (storedData) {
-                try {
-                    inventory = JSON.parse(storedData);
-                } catch(e) {
-                    console.error("Error reading LocalStorage logs, restoring fallback templates", e);
-                    inventory = [...defaultArtworks];
-                    saveToLocalStorage();
-                }
-            } else {
-                inventory = [...defaultArtworks];
-                saveToLocalStorage();
-            }
-            renderGallery();
-        }
-
-        // Persist local state changes
-        function saveToLocalStorage() {
-            try {
-                localStorage.setItem('akvarellskiss_art_inventory', JSON.stringify(inventory));
-                updateStats();
-            } catch (e) {
-                alert("Storage limit exceeded! The image you are trying to add might be too large, or your local storage is full. Please try a different image or clear some old entries.");
-                console.error("LocalStorage write error:", e);
-            }
-        }
-
-        function updateStats() {
-            statsCounter.textContent = `Total Artworks: ${inventory.length}`;
-        }
-
-        // Real-time Image Processor & Image Compressor (Crucial for LocalStorage limits)
-        inputImageFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) {
-                resetImagePreview();
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    // Maximum dimensions for the stored image to save LocalStorage space
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    // Draw image to invisible canvas to compress it to a reasonable JPEG size
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Get compressed base64 string
-                    currentBase64Image = canvas.toDataURL('image/jpeg', 0.7);
-
-                    // Show preview
-                    previewContainer.innerHTML = `<img src="${currentBase64Image}" alt="Preview">`;
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function resetImagePreview() {
-            currentBase64Image = "";
-            previewContainer.innerHTML = `<div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>`;
-        }
-
-        // Render cards to interface
-        function renderGallery() {
-            artGrid.innerHTML = '';
-
-            if (inventory.length === 0) {
-                artGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i>🎨</i>
-                        <h3>Your inventory is currently empty</h3>
-                        <p>Fill out the form on the left to securely add artwork to your collection.</p>
-                    </div>
-                `;
-                updateStats();
-                return;
-            }
-
-            inventory.forEach(art => {
-                const card = document.createElement('div');
-                card.className = 'art-card';
-                
-                const fallbackImg = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23cccccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
-                const imgSrc = art.image && art.image.trim() !== '' ? art.image : fallbackImg;
-
-                card.innerHTML = `
-                    <div class="art-img-container">
-                        <img src="${imgSrc}" alt="${escapeHtml(art.title)}" onerror="this.onerror=null; this.src='${fallbackImg}';">
-                    </div>
-                    <div class="art-details">
-                        <div class="art-title">${escapeHtml(art.title)}</div>
-                        ${art.artist ? `<div class="art-meta"><strong>Artist:</strong> ${escapeHtml(art.artist)}</div>` : ''}
-                        ${art.year ? `<div class="art-meta"><strong>Year:</strong> ${escapeHtml(art.year)}</div>` : ''}
-                        ${art.medium ? `<div class="art-meta"><strong>Medium:</strong> ${escapeHtml(art.medium)}</div>` : ''}
-                        ${art.size ? `<div class="art-meta"><strong>Size:</strong> ${escapeHtml(art.size)}</div>` : ''}
-                        <div class="art-actions">
-                            <button class="btn btn-danger btn-sm" onclick="deleteArtwork('${art.id}')" title="Delete this entry">Delete</button>
-                        </div>
-                    </div>
-                `;
-                artGrid.appendChild(card);
-            });
-
-            updateStats();
-        }
-
-        // Helper string sanitization function to guard against injection flaws
-        function escapeHtml(string) {
-            if(!string) return '';
-            return String(string)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-
-        // Explicit Action Handler: Form Creation Submit
-        artForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const newArt = {
-                id: 'art-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
-                title: document.getElementById('input-title').value.trim(),
-                artist: document.getElementById('input-artist').value.trim(),
-                year: document.getElementById('input-year').value.trim(),
-                medium: document.getElementById('input-medium').value.trim(),
-                size: document.getElementById('input-size').value.trim(),
-                image: currentBase64Image // Uses the generated/compressed string or empty
-            };
-
-            inventory.push(newArt);
-            saveToLocalStorage();
-            renderGallery();
-            
-            // Clean up inputs and image preloader state
-            artForm.reset();
-            resetImagePreview();
-        });
-
-        // Explicit Action Handler: Delete Targeted Item
-        window.deleteArtwork = function(id) {
-            if(confirm("Are you sure you want to delete this specific piece of art?")) {
-                inventory = inventory.filter(item => item.id !== id);
-                saveToLocalStorage();
-                renderGallery();
-            }
-        };
-
-        // Explicit Action Handler: JSON Data Registry Compilation Download Export
-        btnDownload.addEventListener('click', function() {
-            if (inventory.length === 0) {
-                alert("There is no inventory data to download.");
-                return;
-            }
-            
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(inventory, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            
-            const dateStr = new Date().toISOString().slice(0,10);
-            downloadAnchor.setAttribute("download", `art_inventory_${dateStr}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        });
-
-        // Explicit Action Handler: Wipe and clear internal state values
-        btnClearAll.addEventListener('click', function() {
-            if(confirm("CRITICAL WARNING: Are you sure you want to clear your entire inventory? This will permanently wipe all local records.")) {
-                inventory = [];
-                saveToLocalStorage();
-                renderGallery();
-                resetImagePreview();
-            }
-        });
-
-        // Bootstrap on startup
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
-</body>
-</html>
+        .select-control {
+            min-width: 200px;
+            height: 42px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a3728' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 14px) center;
+            padding-right:
