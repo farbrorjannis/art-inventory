@@ -6,17 +6,20 @@
     <title>Art Inventory - A free tool from www.akvarellskiss.se</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
-            --light-bg: #f8f9fa;
+            --primary-color: #4a3728;    /* Djup chokladbrun */
+            --primary-hover: #36281d;
+            --bg-accent: #f4f0ea;       /* Varm sand/beige för paneler och knappar */
+            --bg-accent-hover: #e8e0d5;
+            --light-bg: #faf8f5;        /* Mjuk off-white för bakgrunden */
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #dddddd;
-            --radius: 8px;
-            --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --text-color: #2b2520;      /* Mjukt mörkbrun text */
+            --text-muted: #82756a;
+            --border-color: #dcd5cc;    /* Elegant dämpad kantlinje */
+            --radius-lg: 12px;          /* Mjuka, rundade hörn */
+            --radius-md: 8px;
+            --shadow-sm: 0 2px 8px rgba(74, 55, 40, 0.04);
+            --shadow-md: 0 8px 20px rgba(74, 55, 40, 0.06);
+            --transition: all 0.2s ease-in-out;
         }
 
         * {
@@ -26,7 +29,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
             line-height: 1.6;
@@ -35,162 +38,238 @@
 
         header {
             background-color: var(--primary-color);
-            color: white;
-            padding: 20px 15px;
+            color: #f4f0ea;
+            padding: 30px 15px;
             text-align: center;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
         }
 
         header h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
 
         header a {
-            color: var(--accent-color);
+            color: #e8e0d5;
             text-decoration: none;
+            border-bottom: 1px dashed #e8e0d5;
             transition: var(--transition);
         }
 
         header a:hover {
-            text-decoration: underline;
-            color: #5dade2;
+            color: #ffffff;
+            border-bottom-style: solid;
         }
 
         .container {
             max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 15px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        /* Toolbar styles */
+        /* Top Toolbar Panel */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
+            background-color: var(--bg-accent);
+            padding: 20px 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 35px;
+        }
+
+        .toolbar-info {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .toolbar-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
 
-        /* Buttons */
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: var(--radius);
+        /* Controls Block (Sorting area) */
+        .gallery-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* Inputs, Select & File Upload Elements */
+        .form-control, .select-control {
+            background-color: #ffffff;
+            color: var(--text-color);
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
             font-size: 0.95rem;
-            font-weight: bold;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .select-control {
+            min-width: 220px;
+            height: 46px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a3728' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 16px) center;
+            padding-right: 40px;
+        }
+
+        .form-control:focus, .select-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 55, 40, 0.08);
+        }
+
+        /* Hide the ugly default file input for Import */
+        .file-import-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .file-import-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Pure Neutral Earth-Tone Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-lg);
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            text-decoration: none;
         }
 
         .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
+            background-color: var(--primary-color);
+            color: #ffffff;
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
+            background-color: var(--primary-hover);
         }
 
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
+        .btn-secondary {
+            background-color: var(--bg-accent);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
         }
 
-        .btn-danger:hover {
-            background-color: #c0392b;
+        .btn-secondary:hover {
+            background-color: var(--bg-accent-hover);
+            border-color: var(--text-muted);
         }
 
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
+        .btn-neutral-outline {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
         }
 
-        .btn-success:hover {
-            background-color: #27ae60;
+        .btn-neutral-outline:hover {
+            background-color: #fcfbfa;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
         }
 
-        /* Main layout split for Form and Gallery */
+        /* Main layout split */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 30px;
+            gap: 40px;
         }
 
         @media (min-width: 992px) {
             .main-layout {
-                grid-template-columns: 350px 1fr;
+                grid-template-columns: 360px 1fr;
             }
         }
 
         /* Form Card */
         .form-card {
             background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             height: fit-content;
             position: sticky;
             top: 20px;
         }
 
         .form-card h2 {
-            margin-bottom: 20px;
-            font-size: 1.4rem;
+            margin-bottom: 24px;
+            font-size: 1.25rem;
+            font-weight: 600;
             color: var(--primary-color);
-            border-bottom: 2px solid var(--light-bg);
-            padding-bottom: 10px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            font-size: 0.95rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        /* Preview container for image upload */
+        /* Image preview container */
         .image-preview-container {
             width: 100%;
-            height: 120px;
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius);
-            margin-top: 8px;
+            height: 140px;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -205,110 +284,163 @@
         }
 
         .image-preview-placeholder {
-            color: #7f8c8d;
+            color: var(--text-muted);
             font-size: 0.85rem;
-            text-align: center;
+            font-style: italic;
         }
 
         /* Art Grid & Cards */
         .art-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 30px;
         }
 
         .art-card {
             background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             transition: var(--transition);
-            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .art-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--text-muted);
         }
 
-        /* Responsive image container requirement */
         .art-img-container {
             width: 100%;
-            height: 250px;
-            background-color: #eaeaea;
+            height: 260px;
+            background-color: var(--light-bg);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .art-img-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Prevents distortion for any aspect ratio */
-            padding: 5px;
+            object-fit: contain;
+            padding: 15px;
         }
 
         .art-details {
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
         }
 
         .art-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 12px;
             color: var(--primary-color);
-            line-height: 1.3;
+            line-height: 1.4;
         }
 
         .art-meta {
-            font-size: 0.9rem;
-            color: #666666;
-            margin-bottom: 4px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(220, 213, 204, 0.6);
+            padding-bottom: 4px;
         }
 
         .art-meta strong {
-            color: #444444;
+            font-weight: 600;
+            color: var(--text-color);
         }
 
         .art-actions {
             margin-top: auto;
-            padding-top: 15px;
+            padding-top: 20px;
             display: flex;
             justify-content: flex-end;
         }
 
-        /* Empty state notification */
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.78rem;
+            border-radius: var(--radius-md);
+        }
+
+        /* Empty state block */
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 50px 20px;
-            background-color: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            color: #7f8c8d;
+            padding: 60px 20px;
+            background-color: var(--bg-accent);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--border-color);
+            color: var(--text-muted);
         }
 
         .empty-state i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 15px;
             display: block;
         }
 
-        /* Footer */
         footer {
             text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            padding: 40px 20px;
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
             border-top: 1px solid var(--border-color);
+        }
+
+        /* ==========================================================================
+           PRINT STYLES (AUTOMATIC PDF CLEANUP)
+           ========================================================================== */
+        @media print {
+            body {
+                background-color: #ffffff;
+                color: #000000;
+                padding-bottom: 0;
+            }
+            
+            header, .toolbar, .form-container, .gallery-controls, .art-actions, footer {
+                display: none !important; /* Döljer allt utom själva galleriet */
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .main-layout {
+                display: block; /* Tar bort tvåkolumnslayouten */
+            }
+
+            .art-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr) !important; /* Tvingar 2 kort per rad på papper */
+                gap: 20px !important;
+                page-break-inside: auto;
+            }
+
+            .art-card {
+                box-shadow: none !important;
+                border: 1px solid #666666 !important;
+                page-break-inside: avoid; /* Hindrar ett kort från att delas mitt i ett sidbyte */
+            }
+
+            .art-img-container {
+                background-color: #ffffff !important;
+                height: 220px !important;
+            }
         }
     </style>
 </head>
@@ -324,8 +456,16 @@
                 <span id="stats-counter">Total Artworks: 0</span>
             </div>
             <div class="toolbar-buttons">
-                <button class="btn btn-success" id="btn-download" title="Export current registry to a JSON file">Download Registry (JSON)</button>
-                <button class="btn btn-danger" id="btn-clear-all" title="Completely clear all artworks from local registry">Clear All Artworks</button>
+                <div class="file-import-wrapper">
+                    <button class="btn btn-secondary">Import Registry (JSON)</button>
+                    <input type="file" id="btn-import" accept=".json">
+                </div>
+                
+                <button class="btn btn-secondary" id="btn-download" title="Export data repository to JSON file">Backup (JSON)</button>
+                
+                <button class="btn btn-primary" id="btn-print" title="Skriv ut eller spara som PDF">Skriv ut / PDF</button>
+                
+                <button class="btn btn-neutral-outline" id="btn-clear-all" title="Completely clear local repository records">Clear All</button>
             </div>
         </div>
 
@@ -368,6 +508,19 @@
             </section>
 
             <section class="gallery-container">
+                
+                <div class="gallery-controls">
+                    <div class="control-group">
+                        <span class="control-label">Sortera efter / Sort By</span>
+                        <select id="control-sort" class="select-control">
+                            <option value="newest">Datum (Nyast först)</option>
+                            <option value="oldest">Datum (Äldst först)</option>
+                            <option value="title-asc">Titel (A-Z)</option>
+                            <option value="title-desc">Titel (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="art-grid" id="art-grid">
                     </div>
             </section>
@@ -376,11 +529,11 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Art Inventory App. Provided freely by akvarellskiss.se. All data stored safely on your own machine local storage.</p>
+        <p>&copy; 2026 Art Inventory App. Clean earth-tone framework theme. Powered by akvarellskiss.se.</p>
     </footer>
 
     <script>
-        // Sample default datasets requested in requirements (Using base64 placeholders to keep it self-contained if offline)
+        // Start-data om rullappen körs tom
         const defaultArtworks = [
             {
                 id: "sample-1",
@@ -389,7 +542,8 @@
                 year: "2024",
                 medium: "Watercolor on Arches Paper",
                 size: "30x40 cm",
-                image: "https://picsum.photos/id/1025/600/400"
+                image: "https://picsum.photos/id/1025/600/400",
+                timestamp: Date.now() - 10000
             },
             {
                 id: "sample-2",
@@ -398,33 +552,33 @@
                 year: "2025",
                 medium: "Acrylic & Mixed Media",
                 size: "80x80 cm",
-                image: "https://picsum.photos/id/1043/500/700"
+                image: "https://picsum.photos/id/1043/500/700",
+                timestamp: Date.now()
             }
         ];
 
-        // Core State Controller
         let inventory = [];
-        let currentBase64Image = ""; // Holds the processed image string
+        let currentBase64Image = "";
 
-        // DOM elements
+        // UI Access Elements
         const artGrid = document.getElementById('art-grid');
         const artForm = document.getElementById('art-form');
         const statsCounter = document.getElementById('stats-counter');
         const btnDownload = document.getElementById('btn-download');
+        const btnImport = document.getElementById('btn-import');
+        const btnPrint = document.getElementById('btn-print');
         const btnClearAll = document.getElementById('btn-clear-all');
         const inputImageFile = document.getElementById('input-image-file');
         const previewContainer = document.getElementById('preview-container');
-        const previewPlaceholder = document.getElementById('preview-placeholder');
+        const controlSort = document.getElementById('control-sort');
 
-        // Initializer
+        // Initialisera appen
         function initApp() {
             const storedData = localStorage.getItem('akvarellskiss_art_inventory');
-            
             if (storedData) {
                 try {
                     inventory = JSON.parse(storedData);
                 } catch(e) {
-                    console.error("Error reading LocalStorage logs, restoring fallback templates", e);
                     inventory = [...defaultArtworks];
                     saveToLocalStorage();
                 }
@@ -432,17 +586,15 @@
                 inventory = [...defaultArtworks];
                 saveToLocalStorage();
             }
-            renderGallery();
+            sortAndRender();
         }
 
-        // Persist local state changes
         function saveToLocalStorage() {
             try {
                 localStorage.setItem('akvarellskiss_art_inventory', JSON.stringify(inventory));
                 updateStats();
             } catch (e) {
-                alert("Storage limit exceeded! The image you are trying to add might be too large, or your local storage is full. Please try a different image or clear some old entries.");
-                console.error("LocalStorage write error:", e);
+                alert("Storage quota full! Bilderna komprimeras automatiskt men du kan ha nått webbläsarens totala gräns.");
             }
         }
 
@@ -450,7 +602,7 @@
             statsCounter.textContent = `Total Artworks: ${inventory.length}`;
         }
 
-        // Real-time Image Processor & Image Compressor (Crucial for LocalStorage limits)
+        // Bildkomprimering (Canvas-metoden)
         inputImageFile.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) {
@@ -462,7 +614,6 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Maximum dimensions for the stored image to save LocalStorage space
                     const MAX_WIDTH = 800;
                     const MAX_HEIGHT = 800;
                     let width = img.width;
@@ -480,17 +631,13 @@
                         }
                     }
 
-                    // Draw image to invisible canvas to compress it to a reasonable JPEG size
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Get compressed base64 string
-                    currentBase64Image = canvas.toDataURL('image/jpeg', 0.7);
-
-                    // Show preview
+                    currentBase64Image = canvas.toDataURL('image/jpeg', 0.75);
                     previewContainer.innerHTML = `<img src="${currentBase64Image}" alt="Preview">`;
                 };
                 img.src = event.target.result;
@@ -503,7 +650,29 @@
             previewContainer.innerHTML = `<div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>`;
         }
 
-        // Render cards to interface
+        // Sortering
+        function sortAndRender() {
+            const sortingRule = controlSort.value;
+            
+            inventory.sort((a, b) => {
+                const timeA = a.timestamp || 0;
+                const timeB = b.timestamp || 0;
+                const titleA = (a.title || "").toLowerCase();
+                const titleB = (b.title || "").toLowerCase();
+
+                if (sortingRule === "newest") return timeB - timeA;
+                if (sortingRule === "oldest") return timeA - timeB;
+                if (sortingRule === "title-asc") return titleA.localeCompare(titleB);
+                if (sortingRule === "title-desc") return titleB.localeCompare(titleA);
+                return 0;
+            });
+
+            renderGallery();
+        }
+
+        controlSort.addEventListener('change', sortAndRender);
+
+        // Rendering av gallerikort
         function renderGallery() {
             artGrid.innerHTML = '';
 
@@ -511,8 +680,8 @@
                 artGrid.innerHTML = `
                     <div class="empty-state">
                         <i>🎨</i>
-                        <h3>Your inventory is currently empty</h3>
-                        <p>Fill out the form on the left to securely add artwork to your collection.</p>
+                        <h3>Your collection catalog is currently empty</h3>
+                        <p>Fill out the parameters on the form panel to log entries.</p>
                     </div>
                 `;
                 updateStats();
@@ -523,7 +692,7 @@
                 const card = document.createElement('div');
                 card.className = 'art-card';
                 
-                const fallbackImg = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23cccccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+                const fallbackImg = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%23dcd5cc" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
                 const imgSrc = art.image && art.image.trim() !== '' ? art.image : fallbackImg;
 
                 card.innerHTML = `
@@ -532,12 +701,12 @@
                     </div>
                     <div class="art-details">
                         <div class="art-title">${escapeHtml(art.title)}</div>
-                        ${art.artist ? `<div class="art-meta"><strong>Artist:</strong> ${escapeHtml(art.artist)}</div>` : ''}
-                        ${art.year ? `<div class="art-meta"><strong>Year:</strong> ${escapeHtml(art.year)}</div>` : ''}
-                        ${art.medium ? `<div class="art-meta"><strong>Medium:</strong> ${escapeHtml(art.medium)}</div>` : ''}
-                        ${art.size ? `<div class="art-meta"><strong>Size:</strong> ${escapeHtml(art.size)}</div>` : ''}
+                        ${art.artist ? `<div class="art-meta"><span>Artist</span><strong>${escapeHtml(art.artist)}</strong></div>` : ''}
+                        ${art.year ? `<div class="art-meta"><span>Year</span><strong>${escapeHtml(art.year)}</strong></div>` : ''}
+                        ${art.medium ? `<div class="art-meta"><span>Medium</span><strong>${escapeHtml(art.medium)}</strong></div>` : ''}
+                        ${art.size ? `<div class="art-meta"><span>Size</span><strong>${escapeHtml(art.size)}</strong></div>` : ''}
                         <div class="art-actions">
-                            <button class="btn btn-danger btn-sm" onclick="deleteArtwork('${art.id}')" title="Delete this entry">Delete</button>
+                            <button class="btn btn-neutral-outline btn-sm" onclick="deleteArtwork('${art.id}')">Delete</button>
                         </div>
                     </div>
                 `;
@@ -547,18 +716,12 @@
             updateStats();
         }
 
-        // Helper string sanitization function to guard against injection flaws
-        function escapeHtml(string) {
-            if(!string) return '';
-            return String(string)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+        function escapeHtml(str) {
+            if(!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
-        // Explicit Action Handler: Form Creation Submit
+        // Spara nytt konstverk
         artForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -569,56 +732,87 @@
                 year: document.getElementById('input-year').value.trim(),
                 medium: document.getElementById('input-medium').value.trim(),
                 size: document.getElementById('input-size').value.trim(),
-                image: currentBase64Image // Uses the generated/compressed string or empty
+                image: currentBase64Image,
+                timestamp: Date.now()
             };
 
             inventory.push(newArt);
             saveToLocalStorage();
-            renderGallery();
+            sortAndRender();
             
-            // Clean up inputs and image preloader state
             artForm.reset();
             resetImagePreview();
         });
 
-        // Explicit Action Handler: Delete Targeted Item
+        // Radera ett konstverk
         window.deleteArtwork = function(id) {
-            if(confirm("Are you sure you want to delete this specific piece of art?")) {
+            if(confirm("Är du säker på att du vill ta bort detta konstverk?")) {
                 inventory = inventory.filter(item => item.id !== id);
                 saveToLocalStorage();
-                renderGallery();
+                sortAndRender();
             }
         };
 
-        // Explicit Action Handler: JSON Data Registry Compilation Download Export
+        // EXPORT: Ladda ner fil backup (JSON)
         btnDownload.addEventListener('click', function() {
             if (inventory.length === 0) {
-                alert("There is no inventory data to download.");
+                alert("Det finns inga konstverk att exportera.");
                 return;
             }
-            
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(inventory, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            
-            const dateStr = new Date().toISOString().slice(0,10);
-            downloadAnchor.setAttribute("download", `art_inventory_${dateStr}.json`);
+            downloadAnchor.setAttribute("download", `art_inventory_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
         });
 
-        // Explicit Action Handler: Wipe and clear internal state values
+        // IMPORT: Läs in en tidigare exporterad JSON-fil
+        btnImport.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    
+                    if (Array.isArray(importedData)) {
+                        if (confirm(`Hittade ${importedData.length} konstverk i filen. Vill du ersätta ditt nuvarande galleri med dessa?`)) {
+                            inventory = importedData;
+                            saveToLocalStorage();
+                            sortAndRender();
+                            alert("Katalogen har importerats och uppdaterats!");
+                        }
+                    } else {
+                        alert("Felaktigt format: JSON-filen måste innehålla en lista över konstverk.");
+                    }
+                } catch(err) {
+                    alert("Kunde inte läsa filen. Se till att det är en giltig JSON-fil från appen.");
+                    console.error(err);
+                }
+                // Återställ filväljaren så samma fil kan väljas igen om det behövs
+                btnImport.value = '';
+            };
+            reader.readAsText(file);
+        });
+
+        // PRINT / SAVE TO PDF
+        btnPrint.addEventListener('click', function() {
+            window.print(); // Triggar webbläsarens inbyggda utskrift / Spara som PDF
+        });
+
+        // Rensa hela databasen
         btnClearAll.addEventListener('click', function() {
-            if(confirm("CRITICAL WARNING: Are you sure you want to clear your entire inventory? This will permanently wipe all local records.")) {
+            if(confirm("VARNING: Vill du rensa hela ditt register permanent? Alla osparade ändringar försvinner.")) {
                 inventory = [];
                 saveToLocalStorage();
-                renderGallery();
+                sortAndRender();
                 resetImagePreview();
             }
         });
 
-        // Bootstrap on startup
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
