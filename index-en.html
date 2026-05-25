@@ -8,9 +8,9 @@
         :root {
             --primary-color: #4a3728;    /* Djup chokladbrun */
             --primary-hover: #36281d;
-            --bg-accent: #f4f0ea;       /* Varm sand/beige för paneler och knappar */
+            --bg-accent: #f4f0ea;       /* Varm sand/beige */
             --bg-accent-hover: #e8e0d5;
-            --light-bg: #faf8f5;        /* Mjuk off-white för bakgrunden */
+            --light-bg: #faf8f5;        /* Mjuk off-white */
             --card-bg: #ffffff;
             --text-color: #2b2520;      /* Mjukt mörkbrun text */
             --text-muted: #82756a;
@@ -152,7 +152,7 @@
             box-shadow: 0 0 0 3px rgba(74, 55, 40, 0.08);
         }
 
-        /* Hide the ugly default file input for Import */
+        /* Hide the default file input for Import */
         .file-import-wrapper {
             position: relative;
             display: inline-block;
@@ -366,10 +366,11 @@
             padding-top: 20px;
             display: flex;
             justify-content: flex-end;
+            gap: 8px;
         }
 
         .btn-sm {
-            padding: 8px 16px;
+            padding: 8px 14px;
             font-size: 0.78rem;
             border-radius: var(--radius-md);
         }
@@ -411,7 +412,7 @@
             }
             
             header, .toolbar, .form-container, .gallery-controls, .art-actions, footer {
-                display: none !important; /* Döljer allt utom själva galleriet */
+                display: none !important;
             }
 
             .container {
@@ -421,12 +422,12 @@
             }
 
             .main-layout {
-                display: block; /* Tar bort tvåkolumnslayouten */
+                display: block;
             }
 
             .art-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr) !important; /* Tvingar 2 kort per rad på papper */
+                grid-template-columns: repeat(2, 1fr) !important;
                 gap: 20px !important;
                 page-break-inside: auto;
             }
@@ -434,7 +435,7 @@
             .art-card {
                 box-shadow: none !important;
                 border: 1px solid #666666 !important;
-                page-break-inside: avoid; /* Hindrar ett kort från att delas mitt i ett sidbyte */
+                page-break-inside: avoid;
             }
 
             .art-img-container {
@@ -463,7 +464,7 @@
                 
                 <button class="btn btn-secondary" id="btn-download" title="Export data repository to JSON file">Backup (JSON)</button>
                 
-                <button class="btn btn-primary" id="btn-print" title="Skriv ut eller spara som PDF">Skriv ut / PDF</button>
+                <button class="btn btn-primary" id="btn-print" title="Print or save gallery asset catalog as PDF">Print / Save PDF</button>
                 
                 <button class="btn btn-neutral-outline" id="btn-clear-all" title="Completely clear local repository records">Clear All</button>
             </div>
@@ -473,8 +474,9 @@
             
             <section class="form-container">
                 <div class="form-card">
-                    <h2>Add New Artwork</h2>
+                    <h2 id="form-title">Add New Artwork</h2>
                     <form id="art-form">
+                        <input type="hidden" id="input-edit-id">
                         <div class="form-group">
                             <label for="input-title">Title *</label>
                             <input type="text" id="input-title" class="form-control" placeholder="e.g., Starry Night" required>
@@ -496,13 +498,18 @@
                             <input type="text" id="input-size" class="form-control" placeholder="e.g., 73.7 cm × 92.1 cm">
                         </div>
                         <div class="form-group">
+                            <label for="input-price">Price</label>
+                            <input type="number" id="input-price" class="form-control" placeholder="e.g., 4500" min="0" step="any">
+                        </div>
+                        <div class="form-group">
                             <label for="input-image-file">Upload Image</label>
                             <input type="file" id="input-image-file" class="form-control" accept="image/*">
                             <div class="image-preview-container" id="preview-container">
                                 <div class="image-preview-placeholder" id="preview-placeholder">No image selected</div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Save to Inventory</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-form" style="width: 100%; margin-top: 10px;">Save to Inventory</button>
+                        <button type="button" class="btn btn-neutral-outline" id="btn-cancel-edit" style="width: 100%; margin-top: 8px; display: none;">Cancel Edit</button>
                     </form>
                 </div>
             </section>
@@ -511,12 +518,12 @@
                 
                 <div class="gallery-controls">
                     <div class="control-group">
-                        <span class="control-label">Sortera efter / Sort By</span>
+                        <span class="control-label">Sort By</span>
                         <select id="control-sort" class="select-control">
-                            <option value="newest">Datum (Nyast först)</option>
-                            <option value="oldest">Datum (Äldst först)</option>
-                            <option value="title-asc">Titel (A-Z)</option>
-                            <option value="title-desc">Titel (Z-A)</option>
+                            <option value="newest">Date (Newest first)</option>
+                            <option value="oldest">Date (Oldest first)</option>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
                         </select>
                     </div>
                 </div>
@@ -542,6 +549,7 @@
                 year: "2024",
                 medium: "Watercolor on Arches Paper",
                 size: "30x40 cm",
+                price: "5000",
                 image: "https://picsum.photos/id/1025/600/400",
                 timestamp: Date.now() - 10000
             },
@@ -552,6 +560,7 @@
                 year: "2025",
                 medium: "Acrylic & Mixed Media",
                 size: "80x80 cm",
+                price: "",
                 image: "https://picsum.photos/id/1043/500/700",
                 timestamp: Date.now()
             }
@@ -563,6 +572,10 @@
         // UI Access Elements
         const artGrid = document.getElementById('art-grid');
         const artForm = document.getElementById('art-form');
+        const formTitle = document.getElementById('form-title');
+        const inputEditId = document.getElementById('input-edit-id');
+        const btnSubmitForm = document.getElementById('btn-submit-form');
+        const btnCancelEdit = document.getElementById('btn-cancel-edit');
         const statsCounter = document.getElementById('stats-counter');
         const btnDownload = document.getElementById('btn-download');
         const btnImport = document.getElementById('btn-import');
@@ -594,7 +607,7 @@
                 localStorage.setItem('akvarellskiss_art_inventory', JSON.stringify(inventory));
                 updateStats();
             } catch (e) {
-                alert("Storage quota full! Bilderna komprimeras automatiskt men du kan ha nått webbläsarens totala gräns.");
+                alert("Storage quota full! Images are automatically compressed, but you may have hit the browser limit.");
             }
         }
 
@@ -606,8 +619,7 @@
         inputImageFile.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) {
-                resetImagePreview();
-                return;
+                return; // Behåll tidigare bild om man editerar och inte väljer ny
             }
 
             const reader = new FileReader();
@@ -705,7 +717,9 @@
                         ${art.year ? `<div class="art-meta"><span>Year</span><strong>${escapeHtml(art.year)}</strong></div>` : ''}
                         ${art.medium ? `<div class="art-meta"><span>Medium</span><strong>${escapeHtml(art.medium)}</strong></div>` : ''}
                         ${art.size ? `<div class="art-meta"><span>Size</span><strong>${escapeHtml(art.size)}</strong></div>` : ''}
+                        ${art.price ? `<div class="art-meta"><span>Price</span><strong>${escapeHtml(art.price)}</strong></div>` : ''}
                         <div class="art-actions">
+                            <button class="btn btn-neutral-outline btn-sm" onclick="startEditArtwork('${art.id}')">Edit</button>
                             <button class="btn btn-neutral-outline btn-sm" onclick="deleteArtwork('${art.id}')">Delete</button>
                         </div>
                     </div>
@@ -721,22 +735,50 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
-        // Spara nytt konstverk
+        // Spara / Uppdatera konstverk
         artForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const newArt = {
-                id: 'art-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
-                title: document.getElementById('input-title').value.trim(),
-                artist: document.getElementById('input-artist').value.trim(),
-                year: document.getElementById('input-year').value.trim(),
-                medium: document.getElementById('input-medium').value.trim(),
-                size: document.getElementById('input-size').value.trim(),
-                image: currentBase64Image,
-                timestamp: Date.now()
-            };
+            const editId = inputEditId.value;
+            const title = document.getElementById('input-title').value.trim();
+            const artist = document.getElementById('input-artist').value.trim();
+            const year = document.getElementById('input-year').value.trim();
+            const medium = document.getElementById('input-medium').value.trim();
+            const size = document.getElementById('input-size').value.trim();
+            const price = document.getElementById('input-price').value.trim();
 
-            inventory.push(newArt);
+            if (editId) {
+                // Hitta och uppdatera befintligt konstverk
+                const index = inventory.findIndex(item => item.id === editId);
+                if (index !== -1) {
+                    inventory[index].title = title;
+                    inventory[index].artist = artist;
+                    inventory[index].year = year;
+                    inventory[index].medium = medium;
+                    inventory[index].size = size;
+                    inventory[index].price = price;
+                    // Uppdatera bilden om en ny har laddats upp
+                    if (currentBase64Image) {
+                        inventory[index].image = currentBase64Image;
+                    }
+                }
+                setFormMode(false);
+            } else {
+                // Lägg till helt nytt konstverk
+                const newArt = {
+                    id: 'art-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                    title: title,
+                    artist: artist,
+                    year: year,
+                    medium: medium,
+                    size: size,
+                    price: price,
+                    image: currentBase64Image,
+                    timestamp: Date.now()
+                };
+                inventory.push(newArt);
+            }
+
             saveToLocalStorage();
             sortAndRender();
             
@@ -744,9 +786,57 @@
             resetImagePreview();
         });
 
+        // Aktivera editeringsläge
+        window.startEditArtwork = function(id) {
+            const art = inventory.find(item => item.id === id);
+            if (!art) return;
+
+            formTitle.textContent = "Edit Artwork";
+            inputEditId.value = art.id;
+            document.getElementById('input-title').value = art.title || '';
+            document.getElementById('input-artist').value = art.artist || '';
+            document.getElementById('input-year').value = art.year || '';
+            document.getElementById('input-medium').value = art.medium || '';
+            document.getElementById('input-size').value = art.size || '';
+            document.getElementById('input-price').value = art.price || '';
+            
+            if (art.image) {
+                currentBase64Image = art.image;
+                previewContainer.innerHTML = `<img src="${art.image}" alt="Preview">`;
+            } else {
+                resetImagePreview();
+            }
+
+            btnSubmitForm.textContent = "Update Artwork";
+            btnCancelEdit.style.display = "block";
+            window.scrollTo({ top: document.querySelector('.form-card').offsetTop - 20, behavior: 'smooth' });
+        };
+
+        // Avbryt editering
+        btnCancelEdit.addEventListener('click', function() {
+            artForm.reset();
+            resetImagePreview();
+            setFormMode(false);
+        });
+
+        function setFormMode(isEdit) {
+            if (!isEdit) {
+                formTitle.textContent = "Add New Artwork";
+                inputEditId.value = "";
+                btnSubmitForm.textContent = "Save to Inventory";
+                btnCancelEdit.style.display = "none";
+                resetImagePreview();
+            }
+        }
+
         // Radera ett konstverk
         window.deleteArtwork = function(id) {
-            if(confirm("Är du säker på att du vill ta bort detta konstverk?")) {
+            if(confirm("Are you sure you want to delete this artwork?")) {
+                if (inputEditId.value === id) {
+                    artForm.reset();
+                    resetImagePreview();
+                    setFormMode(false);
+                }
                 inventory = inventory.filter(item => item.id !== id);
                 saveToLocalStorage();
                 sortAndRender();
@@ -756,7 +846,7 @@
         // EXPORT: Ladda ner fil backup (JSON)
         btnDownload.addEventListener('click', function() {
             if (inventory.length === 0) {
-                alert("Det finns inga konstverk att exportera.");
+                alert("No artworks to export.");
                 return;
             }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(inventory, null, 2));
@@ -768,7 +858,7 @@
             downloadAnchor.remove();
         });
 
-        // IMPORT: Läs in en tidigare exporterad JSON-fil
+        // IMPORT: Läs in JSON-fil
         btnImport.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -779,20 +869,19 @@
                     const importedData = JSON.parse(event.target.result);
                     
                     if (Array.isArray(importedData)) {
-                        if (confirm(`Hittade ${importedData.length} konstverk i filen. Vill du ersätta ditt nuvarande galleri med dessa?`)) {
+                        if (confirm(`Found ${importedData.length} artworks. Do you want to replace your current collection with this file?`)) {
                             inventory = importedData;
                             saveToLocalStorage();
                             sortAndRender();
-                            alert("Katalogen har importerats och uppdaterats!");
+                            setFormMode(false);
+                            alert("Inventory successfully imported!");
                         }
                     } else {
-                        alert("Felaktigt format: JSON-filen måste innehålla en lista över konstverk.");
+                        alert("Invalid format: The file must be a valid list of artworks.");
                     }
                 } catch(err) {
-                    alert("Kunde inte läsa filen. Se till att det är en giltig JSON-fil från appen.");
-                    console.error(err);
+                    alert("Could not parse file. Make sure it is a valid JSON export from this app.");
                 }
-                // Återställ filväljaren så samma fil kan väljas igen om det behövs
                 btnImport.value = '';
             };
             reader.readAsText(file);
@@ -800,16 +889,16 @@
 
         // PRINT / SAVE TO PDF
         btnPrint.addEventListener('click', function() {
-            window.print(); // Triggar webbläsarens inbyggda utskrift / Spara som PDF
+            window.print();
         });
 
         // Rensa hela databasen
         btnClearAll.addEventListener('click', function() {
-            if(confirm("VARNING: Vill du rensa hela ditt register permanent? Alla osparade ändringar försvinner.")) {
+            if(confirm("CRITICAL WARNING: Wipe the entire registry? All unsaved updates will be permanently lost.")) {
                 inventory = [];
                 saveToLocalStorage();
                 sortAndRender();
-                resetImagePreview();
+                setFormMode(false);
             }
         });
 
